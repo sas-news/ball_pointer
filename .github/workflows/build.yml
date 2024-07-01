@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # デフォルトブランチを対象としたプッシュ時にで実行されます
   push:
-    branches: ["main"]
+    branches: ['main']
 
   # Actions タブから手動でワークフローを実行できるようにします
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 # 1 つの同時デプロイメントを可能にする
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
@@ -34,20 +34,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "pnpm"
-      - name: Install pnpm
-        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
+          cache: 'npm'
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
       - name: Build
-        run: pnpm run build
+        run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
           # dist リポジトリのアップロード
-          path: "./dist"
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
