@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://sas-news.github.io/ball_pointer/",
+  "homepage": "/ball_pointer/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
