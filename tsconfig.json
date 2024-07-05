@@ -1,4 +1,9 @@
 {
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "module": "ESNext",
+    "target": "ESNext",
+  },
   "files": [],
   "references": [
     {
