@@ -31,8 +31,16 @@ function App() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     if (file) {
+      if (videoURL) {
+        URL.revokeObjectURL(videoURL);
+      }
       const url = URL.createObjectURL(file);
       setVideoURL(url);
+      setImageURL("");
+      setOriginCoordinate(null);
+      setSecondCoordinate(null);
+      setDistanceFromOrigin(null);
+      setRelativeCoordinates([]);
       setIsLastFrame(false);
     }
   };
@@ -52,21 +60,29 @@ function App() {
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (videoElement) {
-      videoElement.addEventListener("loadedmetadata", () => {
-        const frameRate = 30;
-        setFrameRate(frameRate);
+    if (!videoElement) {
+      return;
+    }
 
-        setVideoResolution({
-          width: videoElement.videoWidth,
-          height: videoElement.videoHeight,
-        });
+    const handleLoadedMetadata = () => {
+      const frameRate = 30;
+      setFrameRate(frameRate);
 
-        videoElement.currentTime = 0;
+      setVideoResolution({
+        width: videoElement.videoWidth,
+        height: videoElement.videoHeight,
       });
 
-      videoElement.addEventListener("seeked", captureFrame);
-    }
+      videoElement.currentTime = 0;
+    };
+
+    videoElement.addEventListener("loadedmetadata", handleLoadedMetadata);
+    videoElement.addEventListener("seeked", captureFrame);
+
+    return () => {
+      videoElement.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      videoElement.removeEventListener("seeked", captureFrame);
+    };
   }, [videoURL]);
 
   const goToNextFrame = () => {
@@ -96,7 +112,11 @@ function App() {
       const distanceY = Math.abs(y - originCoordinate.y);
       setDistanceFromOrigin({ x: distanceX, y: distanceY });
     } else {
-      if (distanceFromOrigin) {
+      if (
+        distanceFromOrigin &&
+        distanceFromOrigin.x !== 0 &&
+        distanceFromOrigin.y !== 0
+      ) {
         const relativeX =
           ((x - originCoordinate.x) / distanceFromOrigin.x) * 25;
         const relativeY =
